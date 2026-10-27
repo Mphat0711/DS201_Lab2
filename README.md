@@ -28,3 +28,24 @@ python scripts/package_report.py --report-dir report --zip-path report.zip
 - Report and ZIP: `/kaggle/working/report/` and `/kaggle/working/report.zip`
 
 Set these only in the notebook/config passed into the scripts; do not hard-code them in `src/`.
+
+## Runtime YAML on Kaggle
+
+After cloning, YAML files are normal writable files under `/kaggle/working/<repo>/configs/`.
+Keep versioned templates in `configs/*.example.yaml`; create the actual per-session configuration in `configs/runtime/` from a notebook cell. That directory is intentionally ignored by Git. `train_config.py` copies the exact runtime YAML to `<run_dir>/config.yaml`, so each checkpoint keeps its immutable configuration snapshot.
+
+```python
+from pathlib import Path
+import yaml
+
+template = Path("configs/resnet50_224.example.yaml")
+runtime = Path("configs/runtime/resnet50_224_t4.yaml")
+runtime.parent.mkdir(parents=True, exist_ok=True)
+
+cfg = yaml.safe_load(template.read_text())
+cfg["paths"]["source_root"] = "/kaggle/input/<dataset>/VinaFood21"
+cfg["paths"]["resized_root"] = "/kaggle/working/data/resized_224"
+cfg["paths"]["resized_manifest"] = "/kaggle/working/data/resized_224/manifest.csv"
+cfg["paths"]["run_dir"] = "/kaggle/working/runs/resnet50_224_seed42"
+runtime.write_text(yaml.safe_dump(cfg, sort_keys=False), encoding="utf-8")
+```

@@ -27,7 +27,7 @@ def main() -> None:
     dataset = ManifestImageDataset(manifest, "test", mapping, eval_transform(cfg["data"]["mean"], cfg["data"]["std"]))
     loader = make_loader(dataset, cfg["data"]["batch_size"], False, torch.cuda.is_available())
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False))
+    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False), cfg["model"].get("pretrained_id"))
     checkpoint = torch.load(args.checkpoint, map_location=device, weights_only=False); model.load_state_dict(checkpoint["model_state_dict"])
     y_true, y_pred = predict(model, loader, device)
     summary = save_evaluation_artifacts(y_true, y_pred, target_names, args.output_dir)

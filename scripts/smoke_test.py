@@ -31,7 +31,7 @@ def main() -> None:
     dataset = ManifestImageDataset(manifest, "train", mapping, transform, source_root=source_root)
     loader = make_loader(dataset, cfg["data"]["batch_size"], shuffle=True, pin_memory=torch.cuda.is_available())
     xb, yb = next(iter(loader))
-    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False))
+    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False), cfg["model"].get("pretrained_id"))
     with torch.no_grad():
         logits = model(xb)
     if logits.shape != (xb.shape[0], len(mapping)):

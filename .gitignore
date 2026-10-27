@@ -6,5 +6,6 @@ runs/
 report/
 data/
 configs/local.yaml
+configs/runtime/
 *.pt
 *.zip

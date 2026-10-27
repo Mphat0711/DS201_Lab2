@@ -34,7 +34,7 @@ def main() -> None:
     pin = torch.cuda.is_available()
     train_dl = make_loader(train_ds, cfg["data"]["batch_size"], True, pin)
     val_dl = make_loader(val_ds, cfg["data"]["batch_size"], False, pin)
-    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False))
+    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False), cfg["model"].get("pretrained_id"))
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     history = train_with_early_stopping(model, train_dl, val_dl, device, cfg["training"]["epochs"], cfg["training"]["learning_rate"], run_dir / "best.pt", {"class_to_idx": mapping, "config": cfg}, cfg["training"]["patience"], cfg["training"]["min_delta"])
     history_df = pd.DataFrame(history); history_df.to_csv(run_dir / "training_history.csv", index=False)
