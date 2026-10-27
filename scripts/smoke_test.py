@@ -1,4 +1,4 @@
-"""No-training local verification: config, manifest, DataLoader and model shape."""
+
 from __future__ import annotations
 
 import argparse

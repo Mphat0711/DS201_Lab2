@@ -1,4 +1,4 @@
-"""Metrics calculated from labels/logits with explicit class ordering."""
+
 from __future__ import annotations
 
 from typing import Sequence

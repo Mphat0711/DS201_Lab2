@@ -1,4 +1,4 @@
-"""Configuration loading. Paths are supplied only by YAML/notebook callers."""
+
 from __future__ import annotations
 
 from pathlib import Path

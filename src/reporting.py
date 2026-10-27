@@ -1,4 +1,3 @@
-"""Deterministic EDA/report artifacts. All output paths are explicit."""
 from __future__ import annotations
 
 from pathlib import Path

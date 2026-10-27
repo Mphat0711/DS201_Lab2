@@ -4,19 +4,13 @@ The project is designed for Kaggle/Colab notebooks that orchestrate code from th
 
 ## Workflow
 
-1. Set paths in a config. `configs/local.yaml` is local-only; do not commit it. Use `configs/local.example.yaml` as a portable template.
+1. Select the explicit Kaggle config for the assignment task: `lenet_64.yaml`, `googlenet_64.yaml`, `resnet18_96.yaml`, or `resnet50_224.yaml`.
 2. Freeze the stratified split once, generate EDA/report artifacts, then materialize a required image size.
 3. Run a no-training smoke test before launching any training config.
-4. Train configs sequentially, saving best checkpoints; release VRAM after each run.
+4. Train configs sequentially for their full configured epoch count; save the checkpoint with the lowest validation loss and release VRAM after each run.
 5. Evaluate all saved best checkpoints only after training ends, then package the report.
 
-```powershell
-python scripts/prepare.py --config configs/local.yaml --create-split
-python scripts/smoke_test.py --config configs/local.yaml
-python scripts/prepare.py --config configs/local.yaml --materialize
-python scripts/smoke_test.py --config configs/local.yaml --use-materialized
-python scripts/package_report.py --report-dir report --zip-path report.zip
-```
+For Kaggle, use `notebooks/assignments.ipynb`. Its sections mirror Bài 1–4 and call the versioned YAML files directly.
 
 `prepare.py --materialize` creates every resized image named by the frozen manifest. It is intentionally an explicit operation and can take time/disk space.
 
@@ -29,23 +23,6 @@ python scripts/package_report.py --report-dir report --zip-path report.zip
 
 Set these only in the notebook/config passed into the scripts; do not hard-code them in `src/`.
 
-## Runtime YAML on Kaggle
+## Config on Kaggle
 
-After cloning, YAML files are normal writable files under `/kaggle/working/<repo>/configs/`.
-Keep versioned templates in `configs/*.example.yaml`; create the actual per-session configuration in `configs/runtime/` from a notebook cell. That directory is intentionally ignored by Git. `train_config.py` copies the exact runtime YAML to `<run_dir>/config.yaml`, so each checkpoint keeps its immutable configuration snapshot.
-
-```python
-from pathlib import Path
-import yaml
-
-template = Path("configs/resnet50_224.example.yaml")
-runtime = Path("configs/runtime/resnet50_224_t4.yaml")
-runtime.parent.mkdir(parents=True, exist_ok=True)
-
-cfg = yaml.safe_load(template.read_text())
-cfg["paths"]["source_root"] = "/kaggle/input/<dataset>/VinaFood21"
-cfg["paths"]["resized_root"] = "/kaggle/working/data/resized_224"
-cfg["paths"]["resized_manifest"] = "/kaggle/working/data/resized_224/manifest.csv"
-cfg["paths"]["run_dir"] = "/kaggle/working/runs/resnet50_224_seed42"
-runtime.write_text(yaml.safe_dump(cfg, sort_keys=False), encoding="utf-8")
-```
+The four versioned YAML files already contain the agreed Kaggle paths. If the mounted input slug changes, edit only `paths.source_root` in those YAML files and commit before cloning. `train_config.py` copies the exact YAML to `<run_dir>/config.yaml`, so each checkpoint keeps its immutable configuration snapshot.

@@ -1,4 +1,4 @@
-"""Evaluation artifacts with class order explicitly supplied by caller."""
+
 from __future__ import annotations
 
 from pathlib import Path

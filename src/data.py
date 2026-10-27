@@ -1,4 +1,4 @@
-"""Manifest-based datasets; callers provide all roots, mappings and options."""
+
 from __future__ import annotations
 
 from pathlib import Path

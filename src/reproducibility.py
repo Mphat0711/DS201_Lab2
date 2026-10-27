@@ -1,4 +1,4 @@
-"""Seed and environment helpers with no implicit filesystem behaviour."""
+
 from __future__ import annotations
 
 import random

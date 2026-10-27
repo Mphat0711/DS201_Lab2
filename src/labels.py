@@ -1,4 +1,4 @@
-"""Class-label mapping independent of PyTorch/data loading."""
+
 from __future__ import annotations
 
 import pandas as pd

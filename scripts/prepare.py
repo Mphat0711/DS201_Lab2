@@ -37,7 +37,10 @@ def main() -> None:
     (paths["split_manifest"].parent / "class_to_idx.json").write_text(json.dumps(mapping, indent=2), encoding="utf-8")
     save_split_reports(manifest, mapping, paths["report_root"])
     if args.materialize:
-        materialize_resized_dataset(paths["source_root"], paths["split_manifest"], paths["resized_root"], cfg["data"]["image_size"])
+        preprocessing = cfg.get("preprocessing", {})
+        workers = preprocessing.get("workers", 0)
+        progress_every = preprocessing.get("progress_every", 200)
+        materialize_resized_dataset(paths["source_root"], paths["split_manifest"], paths["resized_root"], cfg["data"]["image_size"], workers=workers, progress_every=progress_every)
     print(f"Split manifest: {paths['split_manifest']}")
 
 

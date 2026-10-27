@@ -1,0 +1,26 @@
+seed: 42
+paths:
+  source_root: "/kaggle/input/datasets/mphatfromuit/vinafood21/VinaFood21"
+  split_manifest: "/kaggle/working/data/metadata/split_seed42.csv"
+  resized_root: "/kaggle/working/data/resized_96"
+  resized_manifest: "/kaggle/working/data/resized_96/manifest.csv"
+  class_mapping: "/kaggle/working/data/metadata/class_to_idx.json"
+  report_root: "/kaggle/working/report"
+  run_dir: "/kaggle/working/runs/resnet18_96_seed42"
+data:
+  val_fraction: 0.2
+  image_size: 96
+  batch_size: 32
+  mean: [0.485, 0.456, 0.406]
+  std: [0.229, 0.224, 0.225]
+preprocessing:
+  workers: 4
+  progress_every: 200
+model:
+  name: resnet18
+  num_classes: 21
+  freeze_backbone: false
+training:
+  optimizer: Adam
+  learning_rate: 0.001
+  epochs: 20

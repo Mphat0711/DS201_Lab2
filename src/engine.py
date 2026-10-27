@@ -1,4 +1,4 @@
-"""Train/evaluate engine. Caller supplies loaders, config values and output location."""
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -36,7 +36,7 @@ def _epoch(model: nn.Module, loader, criterion, device: torch.device, optimizer=
     return {"loss": total_loss / len(loader.dataset), **summary}
 
 
-def train_with_early_stopping(
+def train_fixed_epochs(
     model: nn.Module,
     train_loader,
     val_loader,
@@ -45,29 +45,23 @@ def train_with_early_stopping(
     learning_rate: float,
     checkpoint_path: str | Path,
     checkpoint_metadata: dict[str, Any],
-    patience: int = 2,
-    min_delta: float = 1e-4,
 ) -> list[dict[str, float]]:
-    """Adam-only training; saves best val macro-F1 state to explicit checkpoint path."""
+    """Adam-only fixed-length training; saves the checkpoint with lowest validation loss."""
     checkpoint_path = Path(checkpoint_path)
     checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
     model.to(device)
     optimizer = torch.optim.Adam((p for p in model.parameters() if p.requires_grad), lr=learning_rate)
     criterion = nn.CrossEntropyLoss()
     scaler = torch.amp.GradScaler(device.type, enabled=device.type == "cuda")
-    history, best_f1, stale_epochs = [], float("-inf"), 0
+    history, best_val_loss = [], float("inf")
     for epoch in range(1, epochs + 1):
         train_metrics = _epoch(model, train_loader, criterion, device, optimizer, scaler)
         val_metrics = _epoch(model, val_loader, criterion, device)
         row = {"epoch": epoch, **{f"train_{k}": v for k, v in train_metrics.items()}, **{f"val_{k}": v for k, v in val_metrics.items()}}
         history.append(row)
-        if val_metrics["f1_macro"] > best_f1 + min_delta:
-            best_f1, stale_epochs = val_metrics["f1_macro"], 0
-            torch.save({"model_state_dict": model.state_dict(), "optimizer_state_dict": optimizer.state_dict(), "epoch": epoch, "val_f1_macro": best_f1, **checkpoint_metadata}, checkpoint_path)
-        else:
-            stale_epochs += 1
-            if stale_epochs >= patience:
-                break
+        if val_metrics["loss"] < best_val_loss:
+            best_val_loss = val_metrics["loss"]
+            torch.save({"model_state_dict": model.state_dict(), "optimizer_state_dict": optimizer.state_dict(), "epoch": epoch, "val_loss": best_val_loss, **checkpoint_metadata}, checkpoint_path)
     return history
 
 
