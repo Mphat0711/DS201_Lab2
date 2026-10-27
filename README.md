@@ -1,28 +1,53 @@
-# DS211 Lab 2 — reproducible CNN experiments
+# Lab thực hành 2 — DS201
 
-The project is designed for Kaggle/Colab notebooks that orchestrate code from this repository. Modules in `src/` are atomic: every data/output path is supplied by the caller via config or explicit function argument.
+**Tên:** Trần Minh Phát
 
-## Workflow
+Phân loại ảnh món ăn VinaFood21 bằng LeNet-5, GoogLeNet, ResNet-18 và ResNet-50 pretrained.
 
-1. Select the explicit Kaggle config for the assignment task: `lenet_64.yaml`, `googlenet_64.yaml`, `resnet18_96.yaml`, or `resnet50_224.yaml`.
-2. Freeze the stratified split once, generate EDA/report artifacts, then materialize a required image size.
-3. Run a no-training smoke test before launching any training config.
-4. Train configs sequentially for their full configured epoch count; save the checkpoint with the lowest validation loss and release VRAM after each run.
-5. Evaluate all saved best checkpoints only after training ends, then package the report.
+## Cây thư mục
 
-For Kaggle, use `notebooks/assignments.ipynb`. Its sections mirror Bài 1–4 and call the versioned YAML files directly.
+```text
+DS201_Lab2/
+├── configs/                    # Cấu hình Kaggle của từng bài
+│   ├── lenet_64.yaml           # Bài 1: LeNet-5, ảnh 64×64
+│   ├── googlenet_64.yaml       # Bài 2: GoogLeNet, ảnh 64×64
+│   ├── resnet18_96.yaml        # Bài 3: ResNet-18, ảnh 96×96
+│   └── resnet50_224.yaml       # Bài 4: ResNet-50 pretrained, ảnh 224×224
+├── notebooks/
+│   └── assignments.ipynb       # Notebook chạy chính, giữ hình minh họa của đề
+├── scripts/                    # Các lệnh chuẩn bị, train, đánh giá và đóng gói report
+├── src/                        # Code xử lý dữ liệu, model, training và reporting
+├── data/                       # Thư mục dữ liệu tạo cục bộ (không đưa lên Git)
+├── report/                     # Report tạo cục bộ (không đưa lên Git)
+├── requirements.txt            # Thư viện cần cài
+└── README.md
+```
 
-`prepare.py --materialize` creates every resized image named by the frozen manifest. It is intentionally an explicit operation and can take time/disk space.
+## Hướng dẫn chạy trên Kaggle
 
-## Kaggle convention
+1. Mở `notebooks/assignments.ipynb`, bật GPU T4 và chạy các cell chuẩn bị chung ở đầu notebook.
+2. Chạy bài cần train:
 
-- Original data: `/kaggle/input/<dataset>/VinaFood21` (read-only)
-- Generated resized data/metadata: `/kaggle/working/data/`
-- Runs: `/kaggle/working/runs/`
-- Report and ZIP: `/kaggle/working/report/` and `/kaggle/working/report.zip`
+```python
+run_task('lenet_64')
+run_task('googlenet_64')
+run_task('resnet18_96')
+run_task('resnet50_224')
+```
 
-Set these only in the notebook/config passed into the scripts; do not hard-code them in `src/`.
+3. Sau khi train xong, chạy block xuất report cuối notebook:
 
-## Config on Kaggle
+```python
+SELECTED = ['lenet_64', 'googlenet_64', 'resnet18_96', 'resnet50_224']
+REPO = '/kaggle/working/DS201_Lab2'
 
-The four versioned YAML files already contain the agreed Kaggle paths. If the mounted input slug changes, edit only `paths.source_root` in those YAML files and commit before cloning. `train_config.py` copies the exact YAML to `<run_dir>/config.yaml`, so each checkpoint keeps its immutable configuration snapshot.
+for name in SELECTED:
+    config = f'{REPO}/configs/{name}.yaml'
+    checkpoint = f'/kaggle/working/runs/{name}_seed42/best.pt'
+    output_dir = f'/kaggle/working/report/03_evaluation/{name}_seed42'
+    !python {REPO}/scripts/evaluate_checkpoint.py --config {config} --checkpoint {checkpoint} --output-dir {output_dir}
+
+!python {REPO}/scripts/package_report.py --report-dir /kaggle/working/report --zip-path /kaggle/working/report.zip
+```
+
+Cell đầu notebook tự pull code mới từ GitHub vào Kaggle session. Report cuối nằm tại `/kaggle/working/report.zip`.
