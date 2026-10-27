@@ -1,7 +1,7 @@
 # Lab thực hành 2 — DS201
 
 **Tên:** Trần Minh Phát
-
+**MSSV:** 24521317
 Phân loại ảnh món ăn VinaFood21 bằng LeNet-5, GoogLeNet, ResNet-18 và ResNet-50 pretrained.
 
 ## Cây thư mục
