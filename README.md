@@ -25,7 +25,7 @@ DS201_Lab2/
 
 ## Hướng dẫn chạy trên Kaggle
 
-1. Mở `notebooks/assignments.ipynb`, bật GPU T4 và chạy các cell chuẩn bị chung ở đầu notebook.
+1. Mở `notebooks/assignments.ipynb`, chạy các cell chuẩn bị chung ở đầu notebook.
 2. Chạy bài cần train:
 
 ```python
