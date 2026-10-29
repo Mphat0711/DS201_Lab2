@@ -11,9 +11,8 @@ import torch
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.config import load_config, require_paths
-from src.data import ManifestImageDataset, eval_transform, make_loader
-from src.labels import build_class_mapping
-from src.models import build_model
+from src.data import ManifestImageDataset, build_class_mapping, eval_transform, make_loader
+from src.model import build_model
 
 
 def main() -> None:
@@ -31,7 +30,7 @@ def main() -> None:
     dataset = ManifestImageDataset(manifest, "train", mapping, transform, source_root=source_root)
     loader = make_loader(dataset, cfg["data"]["batch_size"], shuffle=True, pin_memory=torch.cuda.is_available())
     xb, yb = next(iter(loader))
-    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False), cfg["model"].get("pretrained_id"))
+    model = build_model(cfg["model"]["name"], len(mapping), cfg["data"]["image_size"], cfg["model"].get("freeze_backbone", False), cfg["model"].get("pretrained_id"), cfg["model"].get("pool", "avg"))
     with torch.no_grad():
         logits = model(xb)
     if logits.shape != (xb.shape[0], len(mapping)):

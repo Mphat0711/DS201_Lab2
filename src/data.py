@@ -8,11 +8,31 @@ import pandas as pd
 from PIL import Image
 from torch.utils.data import DataLoader, Dataset
 from torchvision import transforms
-from .labels import build_class_mapping
+
+
+def build_transforms(mean: list[float], std: list[float], image_size: int, augmentation: bool = False) -> tuple[transforms.Compose, transforms.Compose]:
+    """Train uses PDF augmentation only when its explicit config flag is enabled."""
+    train_steps: list[object] = []
+    if augmentation:
+        train_steps.extend(
+            [
+                transforms.RandomResizedCrop(image_size, scale=(0.7, 1.0)),
+                transforms.RandomHorizontalFlip(),
+                transforms.RandomRotation(15),
+                transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2),
+            ]
+        )
+    train_steps.extend([transforms.ToTensor(), transforms.Normalize(mean, std)])
+    return transforms.Compose(train_steps), eval_transform(mean, std)
 
 
 def eval_transform(mean: list[float], std: list[float]) -> transforms.Compose:
     return transforms.Compose([transforms.ToTensor(), transforms.Normalize(mean, std)])
+
+
+def build_class_mapping(manifest: pd.DataFrame) -> dict[str, int]:
+    classes = sorted(manifest.loc[manifest["split"] == "train", "class_name"].unique())
+    return {name: index for index, name in enumerate(classes)}
 
 
 class ManifestImageDataset(Dataset[tuple[object, int]]):

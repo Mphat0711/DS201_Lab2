@@ -38,4 +38,17 @@ def save_training_curves(history: pd.DataFrame, destination: str | Path, title: 
         axes[1].plot(history["epoch"], history[column], label=label)
     for axis, ylabel in zip(axes, ("loss", "macro-F1")):
         axis.set_xlabel("epoch"); axis.set_ylabel(ylabel); axis.legend()
+    divergence = divergence_epoch(history)
+    if divergence is not None:
+        axes[0].axvline(divergence, color="tab:red", linestyle="--", label="loss divergence")
+        axes[0].legend()
     fig.suptitle(title); fig.tight_layout(); fig.savefig(destination, dpi=160); plt.close(fig)
+
+
+def divergence_epoch(history: pd.DataFrame) -> int | None:
+    """First of two consecutive epochs where validation loss exceeds train loss."""
+    separated = history["val_loss"] > history["train_loss"]
+    for index in range(len(history) - 1):
+        if bool(separated.iloc[index]) and bool(separated.iloc[index + 1]):
+            return int(history.iloc[index]["epoch"])
+    return None

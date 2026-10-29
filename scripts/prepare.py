@@ -10,7 +10,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from src.config import load_config, require_paths
-from src.labels import build_class_mapping
+from src.data import build_class_mapping
 from src.preprocessing import materialize_resized_dataset
 from src.reporting import save_split_reports
 from src.splits import create_stratified_split

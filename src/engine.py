@@ -2,13 +2,45 @@
 from __future__ import annotations
 
 from pathlib import Path
+from time import perf_counter
 from typing import Any
+import random
 
+import numpy as np
+import pandas as pd
 import torch
 from torch import nn
 from tqdm.auto import tqdm
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix, precision_recall_fscore_support
 
-from .metrics import metric_summary
+
+def set_seed(seed: int) -> None:
+    random.seed(seed)
+    np.random.seed(seed)
+    torch.manual_seed(seed)
+    torch.cuda.manual_seed_all(seed)
+    torch.backends.cudnn.deterministic = True
+    torch.backends.cudnn.benchmark = False
+
+
+def release_cuda() -> None:
+    import gc
+    gc.collect()
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+
+
+def metric_summary(y_true, y_pred) -> dict[str, float]:
+    precision, recall, f1, _ = precision_recall_fscore_support(y_true, y_pred, average="macro", zero_division=0)
+    return {"accuracy": accuracy_score(y_true, y_pred), "precision_macro": precision, "recall_macro": recall, "f1_macro": f1}
+
+
+def evaluation_report(y_true, y_pred, target_names: list[str]):
+    return pd.DataFrame(classification_report(y_true, y_pred, labels=list(range(len(target_names))), target_names=target_names, output_dict=True, zero_division=0)).transpose()
+
+
+def confusion(y_true, y_pred, num_classes: int, normalize: str | None = None):
+    return confusion_matrix(y_true, y_pred, labels=list(range(num_classes)), normalize=normalize)
 
 
 def _epoch(model: nn.Module, loader, criterion, device: torch.device, optimizer=None, scaler=None):
@@ -55,9 +87,10 @@ def train_fixed_epochs(
     scaler = torch.amp.GradScaler(device.type, enabled=device.type == "cuda")
     history, best_val_loss = [], float("inf")
     for epoch in range(1, epochs + 1):
+        started = perf_counter()
         train_metrics = _epoch(model, train_loader, criterion, device, optimizer, scaler)
         val_metrics = _epoch(model, val_loader, criterion, device)
-        row = {"epoch": epoch, **{f"train_{k}": v for k, v in train_metrics.items()}, **{f"val_{k}": v for k, v in val_metrics.items()}}
+        row = {"epoch": epoch, "seconds": perf_counter() - started, **{f"train_{k}": v for k, v in train_metrics.items()}, **{f"val_{k}": v for k, v in val_metrics.items()}}
         history.append(row)
         if val_metrics["loss"] < best_val_loss:
             best_val_loss = val_metrics["loss"]

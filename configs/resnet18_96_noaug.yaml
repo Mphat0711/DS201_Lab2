@@ -6,11 +6,12 @@ paths:
   resized_manifest: "/kaggle/working/data/resized_96/manifest.csv"
   class_mapping: "/kaggle/working/data/metadata/class_to_idx.json"
   report_root: "/kaggle/working/report"
-  run_dir: "/kaggle/working/runs/resnet18_96_seed42"
+  run_dir: "/kaggle/working/runs/resnet18_96_noaug_seed42"
 data:
   val_fraction: 0.2
   image_size: 96
   batch_size: 32
+  augmentation: false
   mean: [0.485, 0.456, 0.406]
   std: [0.229, 0.224, 0.225]
 preprocessing:
