@@ -25,7 +25,7 @@ DS201_Lab2/
 └── README.md
 ```
 
-## Hướng dẫn chạy trên Kaggle
+## Hướng dẫn
 
 1. Mở `notebooks/assignments.ipynb`, chạy các cell chuẩn bị chung ở đầu notebook.
 2. Chạy cell `run_all()` dưới Bài 1.
@@ -40,4 +40,4 @@ run_all()
 # Chạy toàn bộ cell "Evaluation - Report"; cell dùng chính danh sách RUNS.
 ```
 
-Cell đầu notebook tự pull code mới từ GitHub vào Kaggle session. Report cuối nằm tại `/kaggle/working/report.zip`.
+Cell đầu notebook pull code mới từ GitHub vào Kaggle session.
