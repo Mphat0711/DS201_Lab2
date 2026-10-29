@@ -28,13 +28,13 @@ DS201_Lab2/
 ## Hướng dẫn chạy trên Kaggle
 
 1. Mở `notebooks/assignments.ipynb`, chạy các cell chuẩn bị chung ở đầu notebook.
-2. Chạy cell `run_all()` dưới Bài 1. Cell này chạy tuần tự toàn bộ `RUNS`, giải phóng VRAM sau mỗi cấu hình.
+2. Chạy cell `run_all()` dưới Bài 1.
 
 ```python
 run_all()
 ```
 
-3. Sau khi train xong, chạy block xuất report cuối notebook:
+3. Sau khi train xong, chạy block report cuối notebook:
 
 ```python
 # Chạy toàn bộ cell "Evaluation - Report"; cell dùng chính danh sách RUNS.
