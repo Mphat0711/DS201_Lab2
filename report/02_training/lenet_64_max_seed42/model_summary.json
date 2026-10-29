@@ -1,0 +1,11 @@
+{
+  "model": "lenet",
+  "image_size": 64,
+  "augmentation": false,
+  "model_padding": "C1 5x5 P=0; C3 5x5 P=0 (valid convolution)",
+  "total_parameters": 339421,
+  "trainable_parameters": 339421,
+  "best_val_loss_epoch": 4,
+  "divergence_epoch": 2,
+  "seconds_per_epoch": 7.714388116299989
+}

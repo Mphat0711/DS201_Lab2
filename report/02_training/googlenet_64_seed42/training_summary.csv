@@ -1,0 +1,2 @@
+model,image_size,augmentation,model_padding,total_parameters,trainable_parameters,best_val_loss_epoch,divergence_epoch,seconds_per_epoch
+googlenet,64,False,Inception 3x3 P=1; 5x5 P=2; pool branch P=1,127349,127349,20,6,10.692504955349984

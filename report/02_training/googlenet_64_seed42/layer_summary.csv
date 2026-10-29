@@ -1,0 +1,5 @@
+layer,output,parameters
+Inception-1,56,4376
+Inception-2,112,22104
+Inception-3,144,33464
+Inception-4,192,63324

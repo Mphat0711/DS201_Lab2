@@ -1,0 +1,11 @@
+{
+  "model": "resnet50",
+  "image_size": 224,
+  "augmentation": false,
+  "model_padding": "padding follows pretrained microsoft/resnet-50 backbone",
+  "total_parameters": 23551061,
+  "trainable_parameters": 43029,
+  "best_val_loss_epoch": 20,
+  "divergence_epoch": 3,
+  "seconds_per_epoch": 34.873753821999955
+}

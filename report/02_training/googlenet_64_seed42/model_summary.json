@@ -1,0 +1,11 @@
+{
+  "model": "googlenet",
+  "image_size": 64,
+  "augmentation": false,
+  "model_padding": "Inception 3x3 P=1; 5x5 P=2; pool branch P=1",
+  "total_parameters": 127349,
+  "trainable_parameters": 127349,
+  "best_val_loss_epoch": 20,
+  "divergence_epoch": 6,
+  "seconds_per_epoch": 10.692504955349984
+}

@@ -1,0 +1,2 @@
+model,image_size,augmentation,model_padding,total_parameters,trainable_parameters,best_val_loss_epoch,divergence_epoch,seconds_per_epoch
+resnet50,224,False,padding follows pretrained microsoft/resnet-50 backbone,23551061,23551061,11,4,57.51058952224999

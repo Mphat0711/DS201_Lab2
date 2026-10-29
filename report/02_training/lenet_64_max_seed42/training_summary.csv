@@ -1,0 +1,2 @@
+model,image_size,augmentation,model_padding,total_parameters,trainable_parameters,best_val_loss_epoch,divergence_epoch,seconds_per_epoch
+lenet,64,False,C1 5x5 P=0; C3 5x5 P=0 (valid convolution),339421,339421,4,2,7.714388116299989

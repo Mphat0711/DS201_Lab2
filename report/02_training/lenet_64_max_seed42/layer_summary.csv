@@ -1,0 +1,9 @@
+layer,output,parameters
+C1,6x60x60,456
+S2,6x30x30,0
+C3,16x26x26,2416
+S4,16x13x13,0
+flatten,2704,0
+F5,120,324600
+F6,84,10164
+OUT,21,1785
